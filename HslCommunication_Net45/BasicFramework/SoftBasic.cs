@@ -844,6 +844,19 @@ namespace HslCommunication.BasicFramework
         }
 
         /// <summary>
+        /// 选择一个byte数组的前面的几个byte数据信息
+        /// </summary>
+        /// <param name="value">原始的数据信息</param>
+        /// <param name="length">数据的长度</param>
+        /// <returns>选择的前面的几个数据信息</returns>
+        public static byte[] BytesArraySelectBegin( byte[] value, int length )
+        {
+            byte[] buffer = new byte[Math.Min( value.Length, length )];
+            Array.Copy( value, 0, buffer, 0, buffer.Length );
+            return buffer;
+        }
+
+        /// <summary>
         /// 将一个byte数组的前面指定位数移除，返回新的一个数组 ->
         /// Removes the preceding specified number of bits in a byte array, returning a new array
         /// </summary>
@@ -906,7 +919,7 @@ namespace HslCommunication.BasicFramework
         /// <remarks>
         /// 当你要显示本组件框架的版本号的时候，就可以用这个属性来显示
         /// </remarks>
-        public static SystemVersion FrameworkVersion { get; set; } = new SystemVersion( "6.2.2" );
+        public static SystemVersion FrameworkVersion { get; set; } = new SystemVersion( "6.2.4" );
 
 
         #endregion

@@ -162,16 +162,16 @@ namespace HslCommunication.Profinet.LSIS
         public OperateResult WriteCoil(string address, bool value)
         {
            
-            return Write(address, new byte[] { (byte)(value ? 0x01 : 0x00), 0x00 });
+            return Write(address, new byte[] { (byte)(value==true ? 0x01 : 0x00), 0x00 });
         }
-            #endregion
+        #endregion
 
         #region Private Member
 
-            private byte[] PackCommand(byte[] coreCommand)
+        private byte[] PackCommand( byte[] coreCommand )
         {
             byte[] command = new byte[coreCommand.Length + 20];
-            Encoding.ASCII.GetBytes(CompanyID1).CopyTo(command, 0);
+            Encoding.ASCII.GetBytes( CompanyID1 ).CopyTo( command, 0 );
             switch (cpuInfo)
             {
                 case LSCpuInfo.XGK: command[12] = 0xA0; break;
@@ -182,7 +182,7 @@ namespace HslCommunication.Profinet.LSIS
                 default: break;
             }
             command[13] = 0x33;
-            BitConverter.GetBytes((short)coreCommand.Length).CopyTo(command, 16);
+            BitConverter.GetBytes( (short)coreCommand.Length ).CopyTo( command, 16 );
             command[18] = (byte)(baseNo * 16 + slotNo);
 
             int count = 0;
@@ -192,9 +192,9 @@ namespace HslCommunication.Profinet.LSIS
             }
             command[19] = (byte)count;
 
-            coreCommand.CopyTo(command, 20);
+            coreCommand.CopyTo( command, 20 );
 
-            string hex = SoftBasic.ByteToHexString(command, ' ');
+            string hex = SoftBasic.ByteToHexString( command, ' ' );
             return command;
         }
 
@@ -223,53 +223,8 @@ namespace HslCommunication.Profinet.LSIS
             LWord= 0x08,
             Continuous= 0x14
         }
-        /// <summary>
-        /// CheckAddress To Address To Write
-        /// </summary>
-        /// <param name="address"></param>
-        /// <returns></returns>
-        public static bool CheckAddress(string address)
-        {
-            char[] types = new char[] { 'P', 'M', 'L', 'K', 'F', 'T', 'C', 'D', 'S', 'Q', 'I', 'N', 'U', 'Z', 'R' };
-            bool exsist = false;
-            if (address.Length >= 3 || address.Length >= 5)
-            {
-                for (int i = 0; i < types.Length; i++)
-                {
-                    if (types[i] == address[0])
-                    {
 
-
-                        if (address[1] == 'B')
-                        {
-                            exsist = true;
-                        }
-                        else if (address[1] == 'W')
-                        {
-                            exsist = true;
-                        }
-                        else if (address[1] == 'D')
-                        {
-                            exsist = true;
-                        }
-                        else if (address[1] == 'X')
-                        {
-                            exsist = true;
-                        }
-                        else
-                        {
-                            exsist = false;
-                        }
-
-
-                        break;
-                    }
-                }
-            }
-
-            return exsist;
-
-        }
+        
         /// <summary>
         /// AnalysisAddress
         /// </summary>
@@ -318,17 +273,48 @@ namespace HslCommunication.Profinet.LSIS
                 }
                 else
                 {
-                    if (CheckAddress(address))
+                    if (address.Length >= 3 || address.Length >= 5)
                     {
-                        sb.Append(address);
-                        exsist = true;
+                        for (int i = 0; i < types.Length; i++)
+                        {
+                            if (types[i] == address[0])
+                            {
 
-                    }
-                    else
-                    {
-                        exsist = false;
-                    }
 
+                                if (address[1] == 'B')
+                                {
+                                    sb.Append(address);
+                                    exsist = true;
+                                    break;
+                                }
+                                else if (address[1] == 'W')
+                                {
+                                    sb.Append(address);
+                                    exsist = true;
+                                    break;
+                                }
+                                else if (address[1] == 'D')
+                                {
+                                    sb.Append(address);
+                                    exsist = true;
+                                    break;
+                                }
+                                else if (address[1] == 'X')
+                                {
+                                    sb.Append(address);
+                                    exsist = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    exsist = false;
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                   
                 }
                 if (!exsist) throw new Exception(StringResources.Language.NotSupportedDataType);
             }
@@ -345,7 +331,7 @@ namespace HslCommunication.Profinet.LSIS
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
-        private static OperateResult<string> AnalysisAddressDataType(string address)
+        public  static OperateResult<string> AnalysisAddressDataType(string address)
         {
             string lSDataType = string.Empty; ;
             try
